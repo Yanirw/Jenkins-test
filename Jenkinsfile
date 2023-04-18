@@ -23,8 +23,8 @@ pipeline {
             steps {
                 script {
                     def dockerCmd = 'sudo docker run -d -p 8080:80 nginx'
-                    sshagent(['EC2-SERVER-KEY']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.76.28.241 ${dockerCmd}"
+                    withCredentials([sshUserPrivateKey(credentialsId: 'EC2-SERVER-KEY', keyFileVariable: 'EC2_SERVER_KEY')]) {
+                        sh "ssh -i ${EC2_SERVER_KEY} -o StrictHostKeyChecking=no ec2-user@3.76.28.241 ${dockerCmd}"
                     }
                 }    
             }
