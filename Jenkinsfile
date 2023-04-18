@@ -22,9 +22,15 @@ pipeline {
         stage('deploy') {
             steps {
                 script {
-                    def dockerCmd = 'sudo docker run -d -p 8080:80 nginx'
                     withCredentials([sshUserPrivateKey(credentialsId: 'EC2-SERVER-KEY', keyFileVariable: 'EC2_SERVER_KEY')]) {
-                        sh 'ssh -i ' + EC2_SERVER_KEY + ' -o StrictHostKeyChecking=no ec2-user@3.76.28.241 ' + dockerCmd
+                        sh '''
+                          set -e
+                          TEMP_KEY=$(mktemp)
+                          echo "$EC2_SERVER_KEY" > $TEMP_KEY
+                          chmod 600 $TEMP_KEY
+                          ssh -i $TEMP_KEY -o StrictHostKeyChecking=no ec2-user@3.76.28.241 sudo docker run -d -p 8080:80 nginx
+                          rm -f $TEMP_KEY
+                        '''
                     }
                 }    
             }
