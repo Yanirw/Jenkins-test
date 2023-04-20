@@ -14,7 +14,7 @@ pipeline {
         stage('build') {
             steps {
                 script {
-                    echo 'Changes made in build'
+                    echo 'Changes made in build!'
                 }
                 echo "building version ${NEW_VERSION}"
             }
