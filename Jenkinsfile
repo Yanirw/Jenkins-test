@@ -2,32 +2,33 @@ pipeline {
     agent any
 
     stages {
-        stage('build app') {
+        stage('Build App') {
             steps {
                script {
-                echo "building!"
+                echo "Building the app!"
                }
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                  echo "building docker image..."
+                  echo "Building Docker image..."
                 }
             }
         }
 
         stage('Deploy') {
-          environment {
-            AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')  
-            AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
-          }
+            environment {
+                AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')  
+                AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
+            }
             steps {
                 // Add steps to deploy your application
                 script {
-                  sh 'kubectl create deployment nginx-deployment --image=nginx'
+                    sh 'kubectl create deployment nginx-deployment --image=nginx'
                 }
             }
         }
     }
+}
