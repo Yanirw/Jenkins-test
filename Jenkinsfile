@@ -1,33 +1,33 @@
 pipeline {
     agent any
-    environment {
-        NEW_VERSION = '1.3.0'
-    }
+
     stages {
-        stage('test') {
+        stage('build app') {
+            steps {
+               script {
+                echo "building!"
+               }
+            }
+        }
+
+        stage('Build') {
             steps {
                 script {
-                    echo 'Hello World'
+                  echo "building docker image..."
                 }
             }
         }
-        stage('build') {
+
+        stage('Deploy') {
+          environment {
+            AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')  
+            AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
+          }
             steps {
+                // Add steps to deploy your application
                 script {
-                    echo 'Changes made in build!!'
+                  sh 'kubectl create deployment nginx-deployment --image=nginx'
                 }
-                echo "building version ${NEW_VERSION}"
             }
         }
-        stage('deploy') {
-            steps {
-                script {
-                    def dockerCmd = 'sudo docker run -d -p 8080:80 nginx'
-                    sshagent(['EC2-SERVER-KEY']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.127.151.251 ${dockerCmd}"
-                    }
-                }    
-            }
-        }      
-    }     
-}
+    }
